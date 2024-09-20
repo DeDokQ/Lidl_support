@@ -1,19 +1,10 @@
 import os
 from datetime import datetime
 
-RESPONSE = "Empty"
-
+RESPONSE_EN = "Folder creation completed successfully!"
+RESPONSE_RU = "Создание папок успешно завершено!"
 
 def create_folders(path, language, column_date, row_date_start, row_date_end, column_eqp, column_cards_id):
-    translations = {
-        'en': {
-            RESPONSE: "Folder creation completed successfully!"
-        },
-        'ru': {
-            RESPONSE: "Создание папок успешно завершено!"
-        }
-    }
-
     try:
         import openpyxl
         desktop_path = os.path.join(os.path.expanduser("~"), "Desktop")
@@ -61,7 +52,7 @@ def create_folders(path, language, column_date, row_date_start, row_date_end, co
                         os.makedirs(folder_cards_path)
 
         workbook.close()
-        return translations[language][RESPONSE]
+        return RESPONSE_EN if language == "en" else RESPONSE_RU
 
     except Exception as inst:
         return str(inst)
