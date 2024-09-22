@@ -64,8 +64,8 @@ class MyApp(QWidget):
         self.apply_styles_from_file('static/styles/styles.qss')
         self.update_language()
 
-        from SettingsDialog import SettingsDialog
-        self.dialog = SettingsDialog()
+        # from SettingsDialog import SettingsDialog
+        # self.dialog = SettingsDialog()
 
         # Таймер для отсчета времени
         self.timer = QTimer(self)
@@ -107,6 +107,7 @@ class MyApp(QWidget):
 
         from SettingsDialog import SettingsDialog
         self.dialog = SettingsDialog()
+        # self.dialog.change_language(self.current_language)
 
         # Таймер для отсчета времени
         self.timer = QTimer(self)
@@ -209,6 +210,7 @@ class MyApp(QWidget):
         if language_code in self.translations:
             self.current_language = language_code
             self.update_language()
+            self.dialog.set_language(self.current_language)
         else:
             self.log_action(f"Language '{language_code}' not found.")
 

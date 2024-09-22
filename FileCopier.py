@@ -69,11 +69,6 @@ def copy_latest_files(target_folder_name):
                     "Copy error from mergedHex.\n\n")
             return log
 
-        # открываем папку с скопированными файлами
-        os.startfile(target_folder)
-        log += ("Файлы успешно скопированы и папка открыта!\n"
-                "The files have been successfully copied and the folder is open!\n\n")
-
         def screenshot_creator():
             import time
             from pygetwindow import getWindowsWithTitle, getAllTitles
@@ -99,7 +94,7 @@ def copy_latest_files(target_folder_name):
             if application_helper:
                 application_helper[0].minimize()  # Сворачиваем окно
 
-                time.sleep(1)
+                time.sleep(2)
 
                 screenshot = ImageGrab.grab()
                 screenshot.save(os.path.join(target_folder, "screenshot.png"))  # Сохранить скриншот в файл
@@ -113,6 +108,10 @@ def copy_latest_files(target_folder_name):
 
         screenshot_creator()
 
+        # открываем папку с скопированными файлами
+        log += ("Файлы успешно скопированы и папка открыта!\n"
+                "The files have been successfully copied and the folder is open!\n\n")
+        os.startfile(target_folder)
         return log
 
     except Exception as e:
