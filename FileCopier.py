@@ -94,10 +94,11 @@ def copy_latest_files(target_folder_name):
             if application_helper:
                 application_helper[0].minimize()  # Сворачиваем окно
 
-                time.sleep(2)
+                time.sleep(0.5)
 
                 screenshot = ImageGrab.grab()
-                screenshot.save(os.path.join(target_folder, "screenshot.png"))  # Сохранить скриншот в файл
+                full_name = target_folder_name + ".png"
+                screenshot.save(os.path.join(target_folder, full_name))  # Сохранить скриншот в файл
 
                 application_helper[0].restore()
 

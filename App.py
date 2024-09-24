@@ -190,12 +190,82 @@ class MyApp(QWidget):
                                        column_cards_id=self.dialog.column_cards_id.text()))
 
     def apply_styles_from_file(self, file_name):
-        if os.path.exists(file_name):
-            with open(file_name, 'r') as file:
-                style_sheet = file.read()
-            self.setStyleSheet(style_sheet)
-        else:
-            self.log_action(f"Style file '{file_name}' not found.")
+        self.setStyleSheet("""
+                   QWidget {
+                        background-color: #f0f0f0;
+                    }
+                    
+                    /* Стиль кнопок */
+                    QPushButton {
+                        background-color: #4CAF50;
+                        color: white;
+                        border-radius: 10px;
+                        padding: 10px;
+                        font-size: 16px;
+                    }
+                    
+                    QPushButton:hover {
+                        background-color: #45a049;
+                    }
+                    
+                    /* Стиль текстового поля */
+                    QTextEdit {
+                        background-color: #ffffff;
+                        color: #333;
+                        font-family: Courier;
+                        font-size: 14px;
+                        border: 2px solid #ccc;
+                        border-radius: 5px;
+                        padding: 10px;
+                    }
+                    
+                    /* Стиль поля для ввода */
+                    QLineEdit {
+                        background-color: #ffffff;
+                        color: #333;
+                        font-family: Courier;
+                        font-size: 16px;
+                        font-weight: bold;
+                        border: 1px solid #ccc;
+                        border-radius: 5px;
+                        padding: 3px;
+                        min-height: 30px;  /* Установка минимальной высоты */
+                    }
+                    
+                    /* Стиль выпадающего списка */
+                    QComboBox {
+                        border: 1px solid #ccc;
+                        border-radius: 5px;
+                        padding: 5px;
+                        background-color: #ffffff;
+                        font-family: Courier;
+                        font-size: 16px;
+                    }
+                    
+                    QComboBox::drop-down {
+                        subcontrol-origin: padding;
+                        subcontrol-position: top right;
+                        width: 20px;
+                    }
+                    
+                    QComboBox::down-arrow {
+                        image: url(:/icons/down_arrow.png); /* Убедитесь, что иконка доступна */
+                    }
+                    
+                    QComboBox QAbstractItemView {
+                        background-color: #ffffff;
+                        border: 1px solid #ccc;
+                        border-radius: 5px;
+                        selection-background-color: #4CAF50;
+                        selection-color: white;
+                    }
+               """)
+        # if os.path.exists(file_name):
+        #     with open(file_name, 'r') as file:
+        #         style_sheet = file.read()
+        #     self.setStyleSheet(style_sheet)
+        # else:
+        #     self.log_action(f"Style file '{file_name}' not found.")
 
     def update_language(self):
         self.button1.setText(self.translations[self.current_language][BUTTON1_TEXT])

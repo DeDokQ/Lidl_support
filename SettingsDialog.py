@@ -12,19 +12,19 @@ class SettingsDialog(QDialog):
 
         self.translations = {
             'en': {
-                'COLUMN_DATES': 'The letter of the date column:',
-                'ROW_DATES_RANGE': "The range of your team's lines:",
-                'COLUMN_EQUIPMENT': "The letter of the 'Store ID Domain' column:",
-                'COLUMN_CARDS': "The letter of the 'No. of cards' column:",
+                'COLUMN_DATES': 'The letter designation of the DATE column:',
+                'ROW_DATES_RANGE': "The range of work lines FROM and TO:",
+                'COLUMN_EQUIPMENT': "The letter designation of the column 'Store ID Domain:",
+                'COLUMN_CARDS': "The letter designation of the column 'No. of cards':",
                 'SETTINGS_TITLE': 'Settings',
                 'ROW_DATES_RANGE_START': 'The beginning of the range: ',
                 'ROW_DATES_RANGE_END': 'End of the range: ',
             },
             'ru': {
-                'COLUMN_DATES': 'Буква столбика с датами:',
-                'ROW_DATES_RANGE': 'Диапазон строк вашей бригады:',
-                'COLUMN_EQUIPMENT': "Буква столбика 'Store ID Domain':",
-                'COLUMN_CARDS': "Буква столбика 'No. of cards':",
+                'COLUMN_DATES': 'Буквенное обозначение столбика ДАТЫ:',
+                'ROW_DATES_RANGE': 'Диапазон строк работы ОТ и ДО:',
+                'COLUMN_EQUIPMENT': "Буквенное обозначение столбика 'Store ID Domain':",
+                'COLUMN_CARDS': "Буквенное обозначение столбика 'No. of cards':",
                 'SETTINGS_TITLE': 'Настройки',
                 'ROW_DATES_RANGE_START': 'Начало диапазона: ',
                 'ROW_DATES_RANGE_END': 'Конец диапазона: ',
@@ -36,6 +36,7 @@ class SettingsDialog(QDialog):
         self.row_dates_range_layout = QHBoxLayout()
 
         self.update_ui()
+        self.apply_styles_from_file()
 
     def update_ui(self):
 
@@ -106,8 +107,71 @@ class SettingsDialog(QDialog):
         self.language = update_language
         self.update_ui()  # Обновляем UI после смены языка
 
-    def apply_styles_from_file(self, file_name):
-        if path.exists(file_name):
-            with open(file_name, 'r') as file:
-                style_sheet = file.read()
-            self.setStyleSheet(style_sheet)
+    def apply_styles_from_file(self):
+        self.setStyleSheet("""
+                           QWidget {
+                                background-color: #F4F4F9;
+                                font-family: "Arial", sans-serif;
+                                color: #333;
+                            }
+                            
+                            /* Шапка окна (Заголовок) */
+                            QDialog {
+                                border: 2px solid #A0A0A0;
+                                background-color: #E9ECEF;
+                                border-radius: 10px;
+                            }
+                            
+                            /* Поля ввода */
+                            QLineEdit {
+                                border: 1px solid #A0A0A0;
+                                border-radius: 5px;
+                                padding: 5px;
+                                font-size: 14px;
+                                color: #333;
+                                background-color: #FFF;
+                            }
+                            
+                            QLineEdit:focus {
+                                border: 1px solid #007BFF;
+                            }
+                            
+                            /* Метки (Labels) */
+                            QLabel {
+                                font-size: 14px;
+                                font-weight: bold;
+                                color: #333;
+                            }
+                            
+                            /* Кнопки */
+                            QPushButton {
+                                background-color: #007BFF;
+                                color: white;
+                                padding: 6px 12px;
+                                border: none;
+                                border-radius: 5px;
+                                font-size: 14px;
+                            }
+                            
+                            QPushButton:hover {
+                                background-color: #0056b3;
+                            }
+                            
+                            QPushButton:pressed {
+                                background-color: #004085;
+                            }
+                            
+                            /* Комбинированный стиль для формы */
+                            QFormLayout {
+                                margin: 20px;
+                            }
+                            
+                            QDialogButtonBox {
+                                padding-top: 10px;
+                            }
+
+                       """)
+        # if path.exists(file_name):
+        #     with open(file_name, 'r') as file:
+        #         style_sheet = file.read()
+        #     self.setStyleSheet(style_sheet)
