@@ -3,11 +3,9 @@ import shutil
 from glob import glob
 
 
-def copy_latest_files(target_folder_name):
+def copy_latest_files(target_folder_name, is_folder, is_screenshot):
     try:
         user_folder = os.path.expanduser("~")
-        # config_folder = os.path.join(user_folder, "SEGGER", "Flashingtool", "config")
-        # merged_hex_folder = os.path.join(user_folder, "SEGGER", "mergedHex")
 
         config_folder = "C:\\SEGGER\\Flashingtool\\config"
         merged_hex_folder = "C:\\SEGGER\\Flashingtool\\mergedHex"
@@ -81,8 +79,12 @@ def copy_latest_files(target_folder_name):
                 if re.search(r'Hex Merge Tool', title):
                     window = getWindowsWithTitle(title)[0]
                     window.restore()
-                    window.maximize()  # Развернуть на весь экран
-                    window.activate()  # Активируем окно
+
+                    # Развернуть на весь экран
+                    window.maximize()
+
+                    # Активируем окно
+                    window.activate()
                     break
 
             # Если окно не найдено
@@ -92,13 +94,16 @@ def copy_latest_files(target_folder_name):
             application_helper = getWindowsWithTitle("Hex Merge Helper")
 
             if application_helper:
-                application_helper[0].minimize()  # Сворачиваем окно
+                application_helper[0].minimize()
 
                 time.sleep(0.5)
 
                 screenshot = ImageGrab.grab()
                 full_name = target_folder_name + ".png"
-                screenshot.save(os.path.join(target_folder, full_name))  # Сохранить скриншот в файл
+                screenshot.save(os.path.join(target_folder, full_name))
+
+                if is_screenshot:
+                    os.startfile(os.path.join(target_folder, full_name))
 
                 application_helper[0].restore()
 
@@ -110,9 +115,11 @@ def copy_latest_files(target_folder_name):
         screenshot_creator()
 
         # открываем папку с скопированными файлами
-        log += ("Файлы успешно скопированы и папка открыта!\n"
-                "The files have been successfully copied and the folder is open!\n\n")
-        os.startfile(target_folder)
+        log += ("Файлы успешно скопированы!\n"
+                "The files have been successfully copied!\n\n")
+        if is_folder:
+            os.startfile(target_folder)
+
         return log
 
     except Exception as e:

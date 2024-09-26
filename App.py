@@ -1,27 +1,13 @@
 import json
 import os
 from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QPushButton, QTextEdit, QComboBox, QLabel,
-                             QLineEdit, QFileDialog, QDialog)
+                             QLineEdit, QFileDialog, QDialog, QCheckBox)
 from PyQt5.QtCore import QTimer
-
-BUTTON1_TEXT = 'button1'
-BUTTON2_TEXT = 'button2'
-SEND_TEXT_BUTTON = 'send_text_button'
-SETTINGS_BUTTON_TEXT = 'settings_button'
-USER_INPUT_FIELD = 'T-card ID'
-LOG_TITLE = 'Software logs'
-LOG_ACTION2_TEXT = 'log_action_2'
-SETTINGS_ERROR = "None"
 
 
 def get_instruction(language):
-    import json
-    with open('instruction.json', 'r', encoding='utf-8') as file:
-        data = json.load(file)
-    if language == 'ru':
-        return data["languages"]["ru-ru"]
-    else:
-        return data["languages"]["en-en"]
+    from instruction import get_instruction
+    return get_instruction(language)
 
 
 class MyApp(QWidget):
@@ -30,24 +16,26 @@ class MyApp(QWidget):
 
         self.translations = {
             'en': {
-                BUTTON1_TEXT: 'Instruction',
-                BUTTON2_TEXT: 'Create Folders',
-                SEND_TEXT_BUTTON: 'Start',
-                SETTINGS_BUTTON_TEXT: 'Settings',
-                USER_INPUT_FIELD: 'T-card ID',
-                LOG_TITLE: 'Software logs',
-                LOG_ACTION2_TEXT: 'Button 2 pressed',
-                SETTINGS_ERROR: 'Check that the settings are filled in correctly',
+                "instruction": 'Instruction',
+                "create_folders": 'Create Folders',
+                "start": 'Start',
+                "settings": 'Settings',
+                "t_card_id": 'T-card ID',
+                "software_logs": 'Software logs',
+                "settings_error": 'Check that the settings are filled in correctly',
+                "checkbox_folders": "Open the folder with the copied files",
+                "checkbox_screenshot": "Open the screenshot",
             },
             'ru': {
-                BUTTON1_TEXT: 'Инструкция',
-                BUTTON2_TEXT: 'Создать папки',
-                SEND_TEXT_BUTTON: 'Начать',
-                SETTINGS_BUTTON_TEXT: 'Настройки',
-                USER_INPUT_FIELD: 'Айди Т-карты',
-                LOG_TITLE: 'Программные логи',
-                LOG_ACTION2_TEXT: 'Нажата Кнопка 2',
-                SETTINGS_ERROR: 'Проверьте правильность заполнения настроек',
+                "instruction": 'Инструкция',
+                "create_folders": 'Создать папки',
+                "start": 'Начать',
+                "settings": 'Настройки',
+                "t_card_id": 'Айди Т-карты',
+                "software_logs": 'Программные логи',
+                "settings_error": 'Проверьте правильность заполнения настроек',
+                "checkbox_folders": "Открывать папку с скопированными файлами",
+                "checkbox_screenshot": "Открывать сделанный скриншот",
             }
         }
 
@@ -64,9 +52,6 @@ class MyApp(QWidget):
         self.apply_styles_from_file('static/styles/styles.qss')
         self.update_language()
 
-        # from SettingsDialog import SettingsDialog
-        # self.dialog = SettingsDialog()
-
         # Таймер для отсчета времени
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.update_countdown)
@@ -79,26 +64,31 @@ class MyApp(QWidget):
         self.log_field.setReadOnly(True)
         self.label = QLabel()
 
-        self.button1 = QPushButton()
-        self.button2 = QPushButton()
+        self.instruction_button = QPushButton()
+        self.folders_button = QPushButton()
         self.settings_button = QPushButton()
         self.send_text_button = QPushButton()
 
-        # Привязка событий кнопок
-        self.button1.clicked.connect(self.handle_get_instruction)
-        self.button2.clicked.connect(self.handle_create_folders)
+        self.checkbox_folders = QCheckBox()
+        self.checkbox_screenshot = QCheckBox()
+        self.checkbox_folders.setChecked(True)
+        self.checkbox_screenshot.setChecked(True)
+
+        self.instruction_button.clicked.connect(self.handle_get_instruction)
+        self.folders_button.clicked.connect(self.handle_create_folders)
         self.send_text_button.clicked.connect(self.handle_create_data)
         self.settings_button.clicked.connect(self.show_settings_dialog)
 
         self.layout.addWidget(self.input_field)
         self.layout.addWidget(self.label)
         self.layout.addWidget(self.log_field)
-        self.layout.addWidget(self.button1)
-        self.layout.addWidget(self.button2)
+        self.layout.addWidget(self.checkbox_folders)
+        self.layout.addWidget(self.checkbox_screenshot)
+        self.layout.addWidget(self.instruction_button)
+        self.layout.addWidget(self.folders_button)
         self.layout.addWidget(self.settings_button)
         self.layout.addWidget(self.send_text_button)
 
-        # Выбор языка
         self.language_selector = QComboBox()
         self.language_selector.addItem('Русский', 'ru')
         self.language_selector.addItem('English', 'en')
@@ -107,14 +97,14 @@ class MyApp(QWidget):
 
         from SettingsDialog import SettingsDialog
         self.dialog = SettingsDialog()
-        # self.dialog.change_language(self.current_language)
 
-        # Таймер для отсчета времени
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.update_countdown)
 
     def handle_get_instruction(self):
-        self.log_action(get_instruction(self.current_language))
+        self.log_action("\n\n")
+        self.log_field.insertHtml(get_instruction(self.current_language))
+        self.log_action("\n\n")
 
     def handle_create_folders(self):
         if self.dialog.is_data_valid():
@@ -124,7 +114,7 @@ class MyApp(QWidget):
                 self.log_action(f"Выбран файл: {file_path}")
                 self.process_file(file_path)
         else:
-            self.log_action(self.translations[self.current_language][SETTINGS_ERROR])
+            self.log_action(self.translations[self.current_language]["settings_error"])
 
     def handle_create_data(self):
         if self.is_countdown_active:
@@ -134,7 +124,7 @@ class MyApp(QWidget):
 
     def start_countdown(self):
         self.is_countdown_active = True
-        self.countdown_time = 3
+        self.countdown_time = 1
         self.log_action(self.get_log_message("Processing in {time} seconds... Click again to cancel.",
                                              "Запуск через {time} секунды... Нажмите повторно для отмены."))
         self.timer.start(1000)
@@ -169,7 +159,8 @@ class MyApp(QWidget):
         self.log_action(f">>> {text}")
 
         from FileCopier import copy_latest_files
-        self.log_action(copy_latest_files(text))
+        self.log_action(copy_latest_files(target_folder_name=text, is_folder=self.checkbox_folders.isChecked(),
+                                          is_screenshot=self.checkbox_screenshot.isChecked()))
         self.input_field.clear()
 
     def log_action(self, message, countdown_time=None):
@@ -260,20 +251,16 @@ class MyApp(QWidget):
                         selection-color: white;
                     }
                """)
-        # if os.path.exists(file_name):
-        #     with open(file_name, 'r') as file:
-        #         style_sheet = file.read()
-        #     self.setStyleSheet(style_sheet)
-        # else:
-        #     self.log_action(f"Style file '{file_name}' not found.")
 
     def update_language(self):
-        self.button1.setText(self.translations[self.current_language][BUTTON1_TEXT])
-        self.button2.setText(self.translations[self.current_language][BUTTON2_TEXT])
-        self.send_text_button.setText(self.translations[self.current_language][SEND_TEXT_BUTTON])
-        self.settings_button.setText(self.translations[self.current_language][SETTINGS_BUTTON_TEXT])
-        self.label.setText(self.translations[self.current_language][LOG_TITLE])
-        self.input_field.setPlaceholderText(self.translations[self.current_language][USER_INPUT_FIELD])
+        self.instruction_button.setText(self.translations[self.current_language]["instruction"])
+        self.folders_button.setText(self.translations[self.current_language]["create_folders"])
+        self.send_text_button.setText(self.translations[self.current_language]["start"])
+        self.settings_button.setText(self.translations[self.current_language]["settings"])
+        self.label.setText(self.translations[self.current_language]["software_logs"])
+        self.input_field.setPlaceholderText(self.translations[self.current_language]["t_card_id"])
+        self.checkbox_folders.setText(self.translations[self.current_language]["checkbox_folders"])
+        self.checkbox_screenshot.setText(self.translations[self.current_language]["checkbox_screenshot"])
 
     def change_language(self, index):
         language_code = self.language_selector.itemData(index)
@@ -285,6 +272,4 @@ class MyApp(QWidget):
             self.log_action(f"Language '{language_code}' not found.")
 
     def show_settings_dialog(self):
-        if self.dialog.exec_() == QDialog.Accepted:
-            settings = self.dialog.get_settings()
-            self.log_field.append(f"Настройки: {settings}")
+        self.dialog.exec_()
